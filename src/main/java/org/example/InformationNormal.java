@@ -1,0 +1,27 @@
+package org.example;
+
+
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@Data
+public class InformationNormal {
+    private double minCurrent;
+
+    private double minVoltage;
+    private double maxCurrent;
+
+    private double maxVoltage;
+
+    @Override
+    public String toString() {
+        System.out.println("_________________________________________________________________________________________________________");
+        log.info("Информация нормального режима, действующие значения токов и напряжений: " +
+                "Минимальный ток КЗ = {} мА, " +
+                "Максимальный ток КЗ = {} мА, " +
+                "Минимальное напряжение КЗ = {} мВ," +
+                "Максимльное напряжение КЗ = {} мВ,", this.minCurrent, this.maxCurrent, this.minVoltage, this.maxVoltage);
+        return "_________________________________________________________________________________________________________";
+    }
+}
