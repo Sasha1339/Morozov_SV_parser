@@ -50,7 +50,7 @@ public class CalculateKZ {
                 this.voltageC = Math.abs(packetNew.getDataset().getInstUc() / Math.sqrt(2));
             }
 
-            if (number == 15){
+            if (number == 5){
                 findKZ(packetNew);
                 this.maxValuefaseA = 0.0;
                 this.maxValuefaseB = 0.0;
