@@ -16,10 +16,6 @@ public class SVDecoder {
     private static  final int datasetForU = 32;
     private static final int datasetType = 12;//переводить не нужно, форма записи 0х88ba
     private static final int datasetAPPID = 14; //переводить не нужно, форма записи 0х4000
-    private static final int datasetSvID = 33; //нужен перевод
-    private static final int datasetSmpCnt = 77; //нужен перевод
-    private static final int datasetСonfRef = 73;//нужен перевод
-    private static final int datasetSmpSynch = 67;//нужен перевод
 
     public Optional<SVPacket> decode(PcapPacket packet){
         try{
@@ -35,13 +31,13 @@ public class SVDecoder {
             /*получение данных для APPID*/
             result.setAppID(byteArrayToAPPID(data, datasetAPPID));
             /*получение данных для svId*/
-            result.setSvID(byteArrayToSVID(data, datasetSvID));
+            result.setSvID(byteArrayToSVID(data, length - datasetSizeForFaseA));
             /*получение данных для SmpCnt*/
-            result.setSmpCount(byteArrayToSmpCnt(data, length - datasetSmpCnt));
+            result.setSmpCount(byteArrayToSmpCnt(data, length - datasetSizeForFaseA));
             /*получение данных для confRef*/
-            result.setConfRev(byteArrayToConfRef(data, length - datasetСonfRef));
+            result.setConfRev(byteArrayToConfRef(data, length - datasetSizeForFaseA));
             /*получение данных для SmpSynch*/
-            result.setSmpSynch(byteArrayToSmpSynch(data, length - datasetSmpSynch));
+            result.setSmpSynch(byteArrayToSmpSynch(data, length - datasetSizeForFaseA));
             /*получение данных для фазы А*/
             result.getDataset().setInstIa(byteArrayToInt(data, length - datasetSizeForFaseA) /100.0 );
             result.getDataset().setqIa(byteArrayToQuality(data, length - datasetSizeForFaseA));
@@ -73,18 +69,23 @@ public class SVDecoder {
         return Optional.empty(); // Означает что результата нема
     };
     public static String byteArrayToSVID(byte[] b, int offset){
-        return  String.format("%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x",
-                b[offset],
-                b[1+offset],
-                b[2+offset],
-                b[3+offset],
-                b[4+offset],
-                b[5+offset],
-                b[6+offset],
-                b[7+offset],
-                b[8+offset],
-                b[9+offset]
-        );
+        String hex = "";
+        int number = offset;
+        while ((b[number]& 0xFF) != 128 || ((b[number+1]& 0xFF) > 14)){
+            number -= 1;
+        }
+        int size = b[number+1]& 0xFF;
+        for (int i = 0; i < size; i++){
+            //System.out.println(size);
+            hex += String.format("%02x",b[i+number+2]);
+
+        }
+        StringBuilder output = new StringBuilder();
+        for (int i = 0; i < hex.length(); i+=2) {
+            String str = hex.substring(i, i+2);
+            output.append((char)Integer.parseInt(str, 16));
+        }
+        return output.toString();
     };
 
 
@@ -125,21 +126,59 @@ public class SVDecoder {
     public  static  int byteArrayToConfRef(byte[] b, int offset){
         /*производим битовые операции берем нулевой байт, и домножаем его на FF, чтобы отбросить
          * символы у данного числа, в С++ этого не делают*/
+        int result = 0;
+        int res = 0;
+        int number = offset;
+        while ((b[number]& 0xFF) != 131  || ((b[number+1]& 0xFF) > 5)){
+            number -= 1;
+        }
+        int size = b[number+1]& 0xFF;
+        for (int i = 0; i < size; i++){
+            if (i == 0){
+                result = b[number+2+size-(1+i)]& 0xFF;
 
-        return b[offset+3] & 0xFF | (b[offset+2] & 0xFF) << 8 | (b[offset+1] & 0xFF) << 16 | (b[offset] & 0xFF) << 24;
+            }else{
+                res = b[number+1+size-(i)]& 0xFF;
+                result = result | res << (8*i);
+            }
+        }
+        return result;
     }
 
     public  static  int byteArrayToSmpCnt(byte[] b, int offset){
         /*производим битовые операции берем нулевой байт, и домножаем его на FF, чтобы отбросить
          * символы у данного числа, в С++ этого не делают*/
 
-        return b[offset+1] & 0xFF | (b[offset] & 0xFF) << 8;
+        int result = 0;
+        int res;
+        int number = offset;
+        while ((b[number]& 0xFF) != 130  || ((b[number+1]& 0xFF) > 3)){
+            number -= 1;
+        }
+        int size = b[number+1]& 0xFF;
+
+        for (int i = 0; i < size; i++){
+            if (i == 0){
+                result = b[number+1+size-(i)]& 0xFF;
+
+            }else{
+                res = b[number+1+size-(i)]& 0xFF;
+                result = result | res << (8*i);
+
+            }
+
+        }
+        return result;
     }
     public  static  int byteArrayToSmpSynch(byte[] b, int offset){
         /*производим битовые операции берем нулевой байт, и домножаем его на FF, чтобы отбросить
          * символы у данного числа, в С++ этого не делают*/
 
-        return b[offset] & 0xFF;
+        int number = offset;
+        while ((b[number]& 0xFF) != 133  || ((b[number+1]& 0xFF) > 2)){
+            number -= 1;
+        }
+        return b[number+2] & 0xFF;
     }
     public  static  int byteArrayToQuality(byte[] b, int offset){
         /*производим битовые операции берем нулевой байт, и домножаем его на FF, чтобы отбросить

@@ -50,7 +50,11 @@ public class CalculateKZ {
                 this.voltageC = Math.abs(packetNew.getDataset().getInstUc() / Math.sqrt(2));
             }
 
+<<<<<<< HEAD:Src/Главная/java/org/пример/CalculateKZ.java
             if (number == 5){
+=======
+            if (number == 10){
+>>>>>>> a87da6d (Second Commit):src/main/java/org/example/CalculateKZ.java
                 findKZ(packetNew);
                 this.maxValuefaseA = 0.0;
                 this.maxValuefaseB = 0.0;
