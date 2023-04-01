@@ -21,7 +21,8 @@ public class InformationNormal {
                 "Минимальный ток = {} мА, " +
                 "Максимальный ток = {} мА, " +
                 "Минимальное напряжение= {} мВ," +
-                "Максимльное напряжение= {} мВ,", this.minCurrent, this.maxCurrent, this.minVoltage, this.maxVoltage);
+                "Максимльное напряжение" +
+                "= {} мВ,", this.minCurrent, this.maxCurrent, this.minVoltage, this.maxVoltage);
         return "_________________________________________________________________________________________________________";
     }
 }

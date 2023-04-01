@@ -20,6 +20,7 @@ public class EthernetListener {
     * вписать нужную карту в сеттер*/
     static {
 
+
         try {
             for (PcapNetworkInterface nic : Pcaps.findAllDevs()) {
                 log.info("Found NIC: {}", nic);

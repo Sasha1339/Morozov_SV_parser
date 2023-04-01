@@ -28,6 +28,7 @@ public class Main {
                        System.out.println(calculateKZ.getInformationNormal());
                        flag1[0] = 1;
                    }
+
                }
 
             }
