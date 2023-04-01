@@ -10,6 +10,8 @@ public class CalculateKZ {
 // (powered by FernFlower decompiler)
 //
         private final double setting = 4500.0;
+
+
         private ArrayList arrayKZ = new ArrayList();
         private double maxValuefaseA = 0.0;
         private double voltageA = 0.0;
