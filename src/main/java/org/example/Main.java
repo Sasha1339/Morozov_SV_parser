@@ -19,7 +19,7 @@ public class Main {
         ethernetListener.addListener(packet -> {
             Optional<SVPacket> svPacket = svDecoder.decode(packet);
             if (svPacket.isPresent()){
-               // System.out.println(svPacket.get().getDataset().getInstIa());
+               //System.out.println(svPacket.get().getDataset().getInstIa());
                calculateKZ.findMaxValue(svPacket.get());
                if (flag[0] != calculateKZ.getArrayKZ().size()){
                    System.out.println(calculateKZ.getArrayKZ().get(flag[0]));
@@ -28,6 +28,7 @@ public class Main {
                        System.out.println(calculateKZ.getInformationNormal());
                        flag1[0] = 1;
                    }
+
                }
 
             }
